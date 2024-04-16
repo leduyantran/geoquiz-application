@@ -4,7 +4,7 @@ const app        =   express();
 const session  	 =   require('express-session')
 const path       =   require('path');
 //configuring the database
-const dbConfig   =   { url: 'mongodb:gq-user:hanoi@node14624-geo-quiz.us.reclaim.cloud/geoquiz'};
+const dbConfig   =   { url: 'mongodb://gq-user:hanoi@node14624-geo-quiz.us.reclaim.cloud/geoquiz'};
 const mongoose   =   require('mongoose');
 const compression=   require('compression')
 // const https			 =	 require('https');

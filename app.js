@@ -10,7 +10,7 @@ const compression=   require('compression')
 // const https			 =	 require('https');
 // const pm2   = require('pm2');
 // const nodeMailer = require('nodemailer');
-const port = 3001;
+const port = 3000;
 
 
 

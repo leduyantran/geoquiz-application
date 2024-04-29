@@ -1,18 +1,17 @@
-const express    =   require('express');
-const bodyParser =   require('body-parser');
-const app        =   express();
-const session  	 =   require('express-session')
-const path       =   require('path');
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
+const session = require("express-session");
+const path = require("path");
 //configuring the database
-const dbConfig   =   { url: 'mongodb://gq-user:hanoi@node14624-geo-quiz.us.reclaim.cloud/geoquiz'};
-const mongoose   =   require('mongoose');
-const compression=   require('compression')
+// const dbConfig   =   { url: 'mongodb://gq-user:hanoi@node14624-geo-quiz.us.reclaim.cloud/geoquiz'};
+const dbConfig = { url: "mongodb://127.0.0.1:27017/geoquiz" };
+const mongoose = require("mongoose");
+const compression = require("compression");
 // const https			 =	 require('https');
 // const pm2   = require('pm2');
 // const nodeMailer = require('nodemailer');
 const port = 3000;
-
-
 
 //var fs = require('fs');
 // SSL Keys
@@ -26,34 +25,38 @@ const port = 3000;
 mongoose.Promise = global.Promise;
 
 //connecting to the database
-mongoose.connect(dbConfig.url, {useNewUrlParser: true, useUnifiedTopology: true})
-	.then( function ConnectionHandler(){
+mongoose
+	.connect(dbConfig.url, { useNewUrlParser: true, useUnifiedTopology: true })
+	.then(function ConnectionHandler() {
 		console.log("Connection successful");
-	}).catch(function ExceptionHandler(err){
+	})
+	.catch(function ExceptionHandler(err) {
 		console.log("Could not connect to Mongo");
 		console.log(err);
 		process.exit();
 	});
 
-app.use(express.static(__dirname + '/views'));
-app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(__dirname + "/views"));
+app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(session({
-	secret: 'geoquiz',
-	resave: false,
-	saveUninitialized: true
-}))
+app.use(
+	session({
+		secret: "geoquiz",
+		resave: false,
+		saveUninitialized: true,
+	})
+);
 
 //check for new changes before sending the cached version
-app.set('etag', false);
+app.set("etag", false);
 
-var router = require('./routes/country.routes.js');
+var router = require("./routes/country.routes.js");
 app.use(compression());
 
-app.get('/favicon.ico' , function(req , res){
-		res.status(204)
-	});
+app.get("/favicon.ico", function (req, res) {
+	res.status(204);
+});
 
 // let transporter = nodeMailer.createTransport({
 //             host: 'smtp.gmail.com',
@@ -94,15 +97,13 @@ app.get('/favicon.ico' , function(req , res){
 //  next();
 // });
 
-
 //serve static files in a folder and cache six months
 // app.use('/', express.static(path.join(__dirname,'views'),{
 // 				maxAge: 2592000*2, //about a month *2
 // 				etag: false
 // 			}));
 
-app.use('/', router);
-
+app.use("/", router);
 
 //******** Create HTTPS server
 //	var httpsServer = https.createServer(credentials, app);
@@ -120,32 +121,30 @@ app.use('/', router);
 // 	}
 // });
 
-app.listen(port, () => console.log(`Geoquiz app listening on port ${port}!`))
-app.on('error', onError);
-app.on('listening', onListening)
+app.listen(port, () => console.log(`Geoquiz app listening on port ${port}!`));
+app.on("error", onError);
+app.on("listening", onListening);
 
 function onError(error) {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
+	if (error.syscall !== "listen") {
+		throw error;
+	}
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+	var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
+	// handle specific listen errors with friendly messages
+	switch (error.code) {
+		case "EACCES":
+			console.error(bind + " requires elevated privileges");
+			process.exit(1);
+			break;
+		case "EADDRINUSE":
+			console.error(bind + " is already in use");
+			process.exit(1);
+			break;
+		default:
+			throw error;
+	}
 }
 
 /**
@@ -153,19 +152,15 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = httpServer.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
+	var addr = httpServer.address();
+	var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
 
 	map = makeMap();
-  console.log('Listening on ' + bind);
+	console.log("Listening on " + bind);
 }
 
 function onListeningS() {
-  var addr = httpsServer.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  console.log('Listening on ' + bind);
+	var addr = httpsServer.address();
+	var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+	console.log("Listening on " + bind);
 }

@@ -1,17 +1,15 @@
+const MongoClient = require("mongodb").MongoClient;
 
-const MongoClient = require('mongodb').MongoClient;
-
-const url = 'mongodb://gq-user:hanoi@node14624-geo-quiz.us.reclaim.cloud/geoquiz';
+// const url = 'mongodb://gq-user:hanoi@node14624-geo-quiz.us.reclaim.cloud/geoquiz';
+const url = "mongodb://127.0.0.1:27017/geoquiz";
 const dbName = "geoquiz";
-var bcrypt = require('bcrypt');
-var data = require('./data/countryDatabase.json');
-var userData = require('./data/userDatabase.json')
+var bcrypt = require("bcrypt");
+var data = require("./data/countryDatabase.json");
+var userData = require("./data/userDatabase.json");
 // var User = require('./models/user.model.js');
 
-
-
-MongoClient.connect(url, async function DBConnectHandler(err, client){
-	if (err){
+MongoClient.connect(url, async function DBConnectHandler(err, client) {
+	if (err) {
 		console.log("Error Connecting");
 		console.log(err);
 		throw err;
@@ -19,33 +17,34 @@ MongoClient.connect(url, async function DBConnectHandler(err, client){
 	console.log("Connected");
 	const db = client.db(dbName);
 	//Initialize countries
-	db.collection("countries").insertMany(data["features"], function InsertHandler(err, res){
-		if (err){
-			console.log("Error Inserting data");
-			console.log(err);
-			throw err;
+	db.collection("countries").insertMany(
+		data["features"],
+		function InsertHandler(err, res) {
+			if (err) {
+				console.log("Error Inserting data");
+				console.log(err);
+				throw err;
+			}
+			console.log(res);
+			client.close();
 		}
-		console.log(res);
-        client.close();
-	});
+	);
 
 	//Initialize Users
- 	var firstUser = userData[0]
-	let hash = bcrypt.hashSync(firstUser.password,10);
-	firstUser.password = hash
+	var firstUser = userData[0];
+	let hash = bcrypt.hashSync(firstUser.password, 10);
+	firstUser.password = hash;
 
-  db.collection("users").insertOne(
-		firstUser,function InsertHandler(err,res){
-		if (err){
+	db.collection("users").insertOne(firstUser, function InsertHandler(err, res) {
+		if (err) {
 			console.log("Error Inserting User data");
 			console.log(err);
 			throw err;
 		}
 		console.log(res);
-				client.close();
-	 })
+		client.close();
+	});
 });
-
 
 /***********
 Whenever we are retrieving from the database we must create an object in such
@@ -60,7 +59,6 @@ db.countries.find({ "properties.continent" : "africa"})
 
 
 ***********/
-
 
 /*
 console.log(data["features"]);

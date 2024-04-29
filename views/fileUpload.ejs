@@ -1,70 +1,82 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta name="viewpoint" content="width=device-width, initial-scale= 1">
-  <meta http-equiv="Cache-control" content="public">
-  <title>Upload file</title>
-  <link rel="icon" href="data:,">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<head>
+		<meta name="viewpoint" content="width=device-width, initial-scale= 1" />
+		<meta http-equiv="Cache-control" content="public" />
+		<title>Upload file</title>
+		<link rel="icon" href="data:," />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+			integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+			crossorigin="anonymous"
+		/>
+		<script
+			src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+			integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+			crossorigin="anonymous"
+		></script>
+	</head>
 
-</head>
+	<body>
+		<% include ../fixed/nav %>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-auto" style="white-space: pre-wrap">
+					<p class="border border-info rounded p-3">
+						<span class="text-info"> Only csv file is accepted </span>
+						The each row of the file should follow the format below: country,
+						option, spelling, spelling ,... Options are: "a" for alternative
+						spelling for country. "m" for misspelling for country. "ac" for
+						alternative spelling for capital. "mc" for misspelling for capital.
+						Options with "a" are 5 point spellings and "m" are 3 point
+						spellings.
 
-<body>
-  <% include ../fixed/nav %>
-  <div class="container">
-    <div class="row">
-      <div class = "col-md-auto" style="white-space: pre-wrap;">
-        <p class= "border border-info rounded p-3">
-        <span class="text-info"> Only csv file is accepted </span>
-        The each row of the file should follow the format below:
-        country, option, spelling, spelling ,...
+						<img src="csv-example.png" alt="csv format example" />
 
-        Options are: "a" for alternative spelling for country.
-                     "m" for misspelling for country.
-                     "ac" for alternative spelling for capital.
-                     "mc" for misspelling for capital.
-
-        Options with "a" are 5 point spellings and "m" are 3 point spellings.
-
-        <img src="csv-example.png" alt="csv format example">
-
-        All of these records will be appened to the list in the database and will skip any
-        duplicates. If you wish to update country or capital name or do further editing,
-        please go to edit country page.
-      </p>
-    </div>
-    <div class="col-sm-4 mt-5">
-      <form class="form-group" method="POST" action="/fileUpload" enctype="multipart/form-data" >
-        <div class="form-group">
-              <label>Upload File: </label>
-             <input type="file" name ="file" class="form-control" accept=".csv"/>
-        </div>
-        <div class="form-group mt-3">
-            <input type="submit" class="btn btn-info"/>
-       </div>
-
-     </form>
-        <% var message; %>
-        <% if (message != undefined){ %>
-            <div>
-                <p class="text-success"> <%= message%> </p>
-                <% if (failedList.length > 0){ %>
-                  <p> Lines that failed to update:</p>
-                  <% for (var i =0; i < failedList.length; i++){ %>
-                    <%= failedList[i] %>
-                    <br>
-                  <% }%>
-                <% }%>
-            </div>
-        <% } %>
-   </div>
-   </div>
-  </div>
-  <script type="text/javascript">
-  $('li a').removeClass('active');
-  $('a[href="/fileUpload"]').addClass('active')
-  </script>
-</body>
+						All of these records will be appened to the list in the database and
+						will skip any duplicates. If you wish to update country or capital
+						name or do further editing, please go to edit country page.
+					</p>
+				</div>
+				<div class="col-sm-4 mt-5">
+					<form
+						class="form-group"
+						method="POST"
+						action="/fileUpload"
+						enctype="multipart/form-data"
+					>
+						<div class="form-group">
+							<label>Upload File: </label>
+							<input
+								type="file"
+								name="file"
+								class="form-control"
+								accept=".csv"
+							/>
+						</div>
+						<div class="form-group mt-3">
+							<input type="submit" class="btn btn-info" />
+						</div>
+					</form>
+					<% var message; %> <% if (message != undefined){ %>
+					<div>
+						<p class="text-success"><%= message%></p>
+						<% if (failedList.length > 0){ %>
+						<p>Lines that failed to update:</p>
+						<% for (var i =0; i < failedList.length; i++){ %> <%= failedList[i]
+						%>
+						<br />
+						<% }%> <% }%>
+					</div>
+					<% } %>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			$("li a").removeClass("active");
+			$('a[href="/fileUpload"]').addClass("active");
+		</script>
+	</body>
 </html>

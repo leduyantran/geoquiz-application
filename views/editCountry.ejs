@@ -1,210 +1,306 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewpoint" content="width=device-width, initial-scale= 1">
-    <title>Add/Remov a country</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<head>
+		<meta name="viewpoint" content="width=device-width, initial-scale= 1" />
+		<title>Add/Remov a country</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+			integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+			crossorigin="anonymous"
+		/>
+		<script
+			src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+			integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+			crossorigin="anonymous"
+		></script>
+	</head>
+	<body>
+		<% include ../fixed/nav %> <% var data %>
+		<div class="container">
+			<div
+				class="row justify-content-center mt-2"
+				style="white-space: pre-wrap"
+			>
+				<p>
+					This page is to add or remove country. Use drop down menu to select.
+					The data you save will be
+					<span style="color: blue">case-sensitive.</span>
+				</p>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-xs-3 col-m-6">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<select class="form-control" name="fieldToAdd" id="option">
+								<option value="add">Add a new Country</option>
+								<option value="remove">Remove a new Country</option>
+							</select>
+						</div>
+						<div class="input-group-append">
+							<button
+								onclick="selectOption()"
+								type="submit"
+								class="btn btn-info"
+							>
+								Submit
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
 
-  </head>
-  <body>
+			<div class="justify-content-center">
+				<!-- <div class="col-lg-10"> -->
+				<form
+					method="POST"
+					action="/addCountry"
+					id="addCountry"
+					style="display: none"
+					autocomplete="off"
+				>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-sm-3"> </label>
+						</div>
+					</div>
 
-    <% include ../fixed/nav %>
-    <% var data %>
-    <div class="container">
-      <div class="row justify-content-center mt-2" style="white-space: pre-wrap;">
-          <p>
-          This page is to add or remove country.
-          Use drop down menu to select.
-          The data you save will be <span style="color: blue;">case-sensitive.</span>
-          </p>
-      </div>
-      <div class="row justify-content-center">
-        <div class="col-xs-3 col-m-6">
-          <div class="input-group" >
-            <div class="input-group-prepend">
-               <select class="form-control" name="fieldToAdd" id="option">
-                  <option value="add">Add a new Country</option>
-                  <option value="remove">Remove a new Country</option>
-               </select>
-             </div>
-           <div class="input-group-append">
-             <button  onclick ="selectOption()" type="submit" class="btn btn-info">Submit </button>
-           </div>
-         </div>
-       </div>
-    </div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-sm-3 quizNumber"> Continent </label>
+							<input
+								class="col-sm-7 form-control"
+								name="continent"
+								type="text"
+								required
+							/>
+						</div>
+					</div>
 
-    <div class="justify-content-center">
-      <!-- <div class="col-lg-10"> -->
-         <form method="POST" action="/addCountry" id ="addCountry" style="display: none;"  autocomplete="off">
-           <div class="form-group">
-             <div class="row">
-             <label class="col-sm-3" > </label>
-            </div>
-           </div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-sm-3 quizNumber"> Capital </label>
+							<input
+								class="form-control col-sm-7"
+								name="capital"
+								type="text"
+								required
+							/>
+						</div>
+					</div>
 
-           <div class="form-group">
-             <div class="row">
-             <label class="col-sm-3 quizNumber"> Continent </label>
-              <input class="col-sm-7 form-control" name="continent" type="text" required>
-            </div>
-           </div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-sm-3 quizNumber"> Country name </label>
+							<input
+								class="col-sm-7 form-control"
+								name="name"
+								type="text"
+								required
+							/>
+						</div>
+					</div>
 
-           <div class="form-group">
-             <div class="row">
-             <label class="col-sm-3 quizNumber"> Capital </label>
-              <input class="form-control col-sm-7" name="capital" type="text" required>
-            </div>
-           </div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-sm-3 quizNumber"> Alternative Capital </label>
+							<input
+								class="col-sm-7 form-control"
+								name="altCapital"
+								type="text"
+								placeholder="Multiple entries are separated by comma"
+							/>
+						</div>
+					</div>
 
-          <div class="form-group">
-            <div class="row">
-            <label class="col-sm-3 quizNumber"> Country name </label>
-             <input class="col-sm-7 form-control" name="name" type="text" required>
-           </div>
-          </div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-sm-3 quizNumber">
+								Alternative Country Names
+							</label>
+							<input
+								class="col-sm-7 form-control"
+								name="altName"
+								type="text"
+								placeholder="Multiple entries are separated by comma"
+							/>
+						</div>
+					</div>
 
-          <div class="form-group">
-            <div class="row">
-            <label class="col-sm-3 quizNumber"> Alternative Capital </label>
-             <input class="col-sm-7 form-control" name="altCapital" type="text" placeholder="Multiple entries are separated by comma">
-           </div>
-          </div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-sm-3 quizNumber">
+								Misspellings for Capital
+							</label>
+							<input
+								class="col-sm-7 form-control"
+								name="misspell_capital"
+								type="text"
+								placeholder="Multiple entries are separated by comma"
+							/>
+						</div>
+					</div>
 
-          <div class="form-group">
-            <div class="row">
-            <label class="col-sm-3 quizNumber"> Alternative Country Names </label>
-             <input class="col-sm-7 form-control" name="altName" type="text" placeholder="Multiple entries are separated by comma">
-           </div>
-          </div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-sm-3 quizNumber">
+								Misspellings for Country
+							</label>
+							<input
+								class="col-sm-7 form-control"
+								name="misspell_name"
+								type="text"
+								placeholder="Multiple entries are separated by comma"
+							/>
+						</div>
+					</div>
 
-          <div class="form-group">
-            <div class="row">
-            <label class="col-sm-3 quizNumber"> Misspellings for Capital </label>
-             <input class="col-sm-7 form-control" name="misspell_capital" type="text" placeholder="Multiple entries are separated by comma">
-           </div>
-          </div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-sm-3 quizNumber"> Geometry Type </label>
+							<input
+								class="col-sm-7 form-control"
+								name="type"
+								type="text"
+								required
+							/>
+						</div>
+					</div>
 
-          <div class="form-group">
-            <div class="row">
-            <label class="col-sm-3 quizNumber"> Misspellings for Country </label>
-             <input class="col-sm-7 form-control" name="misspell_name" type="text" placeholder="Multiple entries are separated by comma" >
-           </div>
-          </div>
+					<div class="form-group">
+						<div class="row">
+							<label for="input-lg" class="col-sm-3 quizNumber">
+								Coordinates
+							</label>
+							<textarea
+								class="col-sm-7 form-control"
+								rows="4"
+								type="text"
+								name="coordinates"
+								required
+							></textarea>
+						</div>
+					</div>
+					<div class="text-center">
+						<button type="submit" class="btn btn-outline-info">Submit</button>
+					</div>
+				</form>
+			</div>
 
-          <div class="form-group">
-            <div class="row">
-            <label class="col-sm-3 quizNumber"> Geometry Type </label>
-             <input class="col-sm-7 form-control" name="type" type="text" required>
-           </div>
-          </div>
+			<div class="row justify-content-center mt-3">
+				<form
+					id="getCountry"
+					style="display: none"
+					method="GET"
+					action="/getCountryInfo"
+					autocomplete="off"
+				>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"
+								>Enter Country Name to Remove:
+							</span>
+						</div>
+						<input
+							class="form-control"
+							name="countryName"
+							type="text"
+							required
+						/>
+						<input
+							class="form-control"
+							name="option"
+							value="remove"
+							type="hidden"
+						/>
+						<div class="input-group-append">
+							<input
+								onsubmit="selectOption()"
+								class="btn btn-info"
+								id="getData"
+								type="submit"
+								value="Find"
+							/>
+						</div>
+					</div>
+				</form>
+			</div>
 
-          <div class="form-group">
-            <div class="row">
-            <label for ="input-lg" class="col-sm-3 quizNumber"> Coordinates </label>
-             <textarea class="col-sm-7 form-control" rows="4" type="text" name="coordinates" required></textarea>
-           </div>
-          </div>
-          <div class="text-center">
-          <button type="submit" class="btn btn-outline-info">Submit </button>
-        </div>
-      </form>
-    </div>
+			<% var res;%> <% if (res!= undefined){ %>
+			<div class="row justify-content-center mt-2" id="message-remove">
+				<%= res %>! <%} %> <% var data; %> <% if ( data != undefined && data[0]
+				== undefined) { %>
+				<div class="row justify-content-center" id="message">
+					Incorrect Country Name entered, please try again.
+				</div>
+				<% } else if (data != undefined && data[0] != undefined){ %> <% data =
+				data[0] %>
+				<div id="confirmPage">
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col"></th>
+								<th scope="col">Content</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<th scope="row">Country Name</th>
+								<td><%= data.properties.name[0] %></td>
+							</tr>
+							<tr>
+								<th scope="row">Capital</th>
+								<td><%= data.properties.capital[0] %></td>
+							</tr>
+						</tbody>
+					</table>
+					<form method="POST" action="/removeCountry" autocomplete="off">
+						<input
+							class="btn btn-info"
+							id="removeCountry"
+							type="hidden"
+							name="id"
+							value="<%"
+							="data._id"
+							%
+						/>>
+						<p style="color: red">
+							** You will not be able to undo this action once you click
+							"Remove".
+						</p>
+						<input class="btn btn-info" value="Remove" type="submit" />
+						<button class="btn btn-info" id="cancel">Cancel</button>
+					</form>
+				</div>
+				<% } %>
+			</div>
+		</div>
+		<script type="text/javascript">
+			$("li a").removeClass("active");
+			$('a[href="/editCountry"]').addClass("active");
 
-    <div class="row justify-content-center mt-3">
-      <form id="getCountry" style="display: none;" method="GET" action="/getCountryInfo" autocomplete="off">
-        <div class="input-group">
-          <div class="input-group-prepend">
-              <span class="input-group-text">Enter Country Name to Remove: </span>
-          </div>
-          <input class="form-control" name="countryName" type="text" required>
-          <input class="form-control" name="option" value="remove" type="hidden">
-          <div class="input-group-append">
-            <input onsubmit="selectOption()" class="btn btn-info" id ="getData" type="submit" value="Find">
-          </div>
-        </div>
-      </form>
-    </div>
+			function selectOption() {
+				var option = $("#option :selected").val();
+				if (option == "add") {
+					$("#addCountry").show();
+					$("#getCountry").hide();
+					// $('#message').text("")
+				}
+				if (option == "remove") {
+					$("#getCountry").show();
+					$("#addCountry").hide();
+				}
+				$("#message-remove").text("");
+				$("#message").text("");
+			}
 
-    <% var res;%>
-    <% if (res!= undefined){ %>
-      <div class="row justify-content-center mt-2" id="message-remove">
-            <%= res %>!
-    <%} %>
-
-    <% var data; %>
-      <% if ( data != undefined && data[0] == undefined) { %>
-          <div class="row justify-content-center" id="message"> Incorrect Country Name entered, please try again. </div>
-      <% } else if (data != undefined && data[0] != undefined){ %>
-        <% data = data[0] %>
-        <div id = "confirmPage">
-        <table class="table" >
-        <thead>
-          <tr>
-            <th scope="col"></th>
-            <th scope="col">Content</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">Country Name</th>
-            <td>
-              <%= data.properties.name[0] %>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">Capital</th>
-            <td>
-              <%= data.properties.capital[0] %>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <form method="POST" action="/removeCountry" autocomplete="off">
-
-      <input class="btn btn-info" id ="removeCountry" type="hidden" name = "id" value= <%= data._id %>>
-      <p style="color: red;"> ** You will not be able to undo this action once you click "Remove". </p>
-      <input class="btn btn-info" value="Remove" type="submit">
-      <button class="btn btn-info" id ="cancel" >Cancel</button>
-       </form>
-      </div>
-    <% } %>
-
-
-    </div>
-  </div>
-  <script type="text/javascript">
-  $('li a').removeClass('active');
-  $('a[href="/editCountry"]').addClass('active');
-
-  function selectOption(){
-    var option = $("#option :selected").val();
-    if (option == "add"){
-      $('#addCountry').show();
-      $('#getCountry').hide();
-      // $('#message').text("")
-    }
-    if (option =="remove"){
-      $('#getCountry').show();
-      $("#addCountry").hide();
-
-    }
-    $('#message-remove').text("");
-    $('#message').text("");
-
-  }
-
-  $(document).on('click', '#cancel', function(event)
-  {
-      event.preventDefault();
-      $('#confirmPage').hide();
-      $('#message-remove').text("");
-      $('#message').text("");
-
-  });
-
-  </script>
-  </body>
+			$(document).on("click", "#cancel", function (event) {
+				event.preventDefault();
+				$("#confirmPage").hide();
+				$("#message-remove").text("");
+				$("#message").text("");
+			});
+		</script>
+	</body>
 </html>

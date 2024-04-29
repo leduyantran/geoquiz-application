@@ -1,19 +1,28 @@
+/**
+ * This section of code is attempting to prevent the user from using the back button of the browser
+ * by manipulating the window location hash and setting up an event listener to detect hash changes.
+ */
 window.location.hash = "no-back-button";
-window.location.hash = "Again-No-back-button"; //again because google chrome don't insert first hash into history
+
+/** This line is a workaround for a Chrome issue where the first hash change isn't recorded in the history */
+window.location.hash = "Again-No-back-button";
 window.onhashchange = function () {
 	window.location.hash = "no-back-button";
 };
-console.log("here");
 
+/** Declaration of variables to hold information about selected countries, map features, map center, zoom level, and URL. */
 var selectedCountries;
 var features;
 var center, zoom, minzoom;
 var url;
+
+/** Retrieving the continent information from the HTML document and converting it to lowercase. */
 var continent = document
 	.getElementsByClassName("continent")[0]
 	.innerHTML.toLowerCase()
 	.trim();
 
+/** Switch statement to set the center and zoom level of the map based on the continent. */
 switch (continent) {
 	case "africa":
 		center = [11, -1];
@@ -52,11 +61,16 @@ switch (continent) {
 		break;
 }
 
-// var urlforCountries = "https://" + window.location.host + "/quiz/" + continent;
+/**
+ * Constructing the URL to fetch country data based on the continent.
+ * var urlforCountries = "https://" + window.location.host + "/quiz/" + continent;
+ */
 var urlforCountries = "http://" + window.location.host + "/quiz/" + continent;
 
 console.log("entered");
 console.log(urlforCountries);
+
+/** Using XMLHttpRequest to fetch country data from the server. */
 var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function ReceivedCallback() {
 	if (this.readyState == 4 && this.status == 200) {
@@ -64,9 +78,11 @@ xhttp.onreadystatechange = function ReceivedCallback() {
 		console.log("Response Received");
 	}
 };
+
 xhttp.open("GET", urlforCountries, true);
 xhttp.send(null);
 
+/** Creating a vector layer for displaying country boundaries on the map. */
 var vectorLayer = new ol.layer.Vector({
 	renderMode: "image",
 	source: new ol.source.Vector({
@@ -86,6 +102,7 @@ var vectorLayer = new ol.layer.Vector({
 	renderer: "webgl",
 });
 
+/** Creating the map object with the vector layer. */
 var map = new ol.Map({
 	layers: [vectorLayer],
 	target: "map",
@@ -96,11 +113,12 @@ var map = new ol.Map({
 	}),
 });
 
-//to check if backgroundlayer style is already have been applied. If so, skip adding bbFeatures.
-// features that have BBS
+/** To check if backgroundlayer style is already have been applied. If so, skip adding bbFeatures. */
 var bbFeatures = [];
 var bbindex = 0;
 var beforeHighlight = 0;
+
+/** Creating a vector layer to display background boundaries. */
 var backgroundLayer = new ol.layer.Vector({
 	source: new ol.source.Vector({
 		renderMode: "image",
@@ -108,7 +126,7 @@ var backgroundLayer = new ol.layer.Vector({
 		format: new ol.format.GeoJSON(),
 	}),
 	style: function (feature) {
-		//console.log(feature)
+		/** Styling the background boundaries differently from the regular country boundaries. */
 		if (feature.get("name") == "BB") {
 			console.log(feature.get("name"));
 			if (beforeHighlight < 14) {
@@ -129,7 +147,7 @@ var backgroundLayer = new ol.layer.Vector({
 		} else {
 			return new ol.style.Style({
 				fill: new ol.style.Fill({
-					color: "rgb(175, 184, 198)", //light grey
+					color: "rgb(175, 184, 198)",
 				}),
 				stroke: new ol.style.Stroke({
 					color: "rgb(79, 83, 89)",
@@ -140,12 +158,15 @@ var backgroundLayer = new ol.layer.Vector({
 	renderer: "webgl",
 });
 
+/** Adding the background layer to the map. */
 map.addLayer(backgroundLayer);
 
+/** Event listener for changes in the background layer. */
 backgroundLayer.on("change", function (e) {
 	LoadQuiz();
 });
 
+/** Function to handle loading the quiz when the map is ready. */
 function LoadQuiz() {
 	if (map.getLayers().getArray()[0].getSource().getState() == "ready") {
 		document.getElementById("myModal").style.display = "none";
@@ -159,9 +180,11 @@ function LoadQuiz() {
 	}
 }
 
+/** Declaration of variables for quiz-related functionality. */
 var numCountries = 10;
 var features;
 
+/** Array of colors for styling selected countries. */
 var colors = [
 	"rgb(66, 244, 206)",
 	"rgb(175, 47, 249)",
@@ -175,50 +198,62 @@ var colors = [
 	"rgb(237, 23, 163)",
 ];
 
+/** Function to generate a random color from the colors array. */
 function randomColor() {
 	var color = colors[Math.floor(Math.random() * 10)];
 	return color;
 }
 
+/** Array to store used colors. */
 var used = [];
 var usedIndex = 0;
 
+/** Function to reset map view to default. */
 function DefaultZoom() {
 	map.getView().setCenter(center);
 	map.getView().setZoom(zoom);
 }
 
-//When the quiz starts
+/** Function called when the quiz starts. */
 function Start() {
+	/** Submitting a comment form with the ID "sentcomment". */
 	$("#sentcomment").submit();
+	/** Checking if the quiz is restarting. */
 	if ($("#start")[0].innerHTML == "Restart") {
+		/** Reloading the page if restarting. */
 		window.location.reload();
 	} else {
+		/** Disabling the start button or changing its text to "Restart". */
 		if ($("#start")[0].innerHTML == "Start the Quiz") {
 			$("#start")[0].disabled = true;
 		} else {
 			$("#start")[0].innerHTML = "Restart";
 		}
 
+		/** Displaying the quiz interface. */
 		document.getElementById("takeQuiz").style.display = "block";
+
+		/** Getting features from the map's vector layer. */
 		features = map.getLayers().getArray()[0].getSource().getFeatures();
 
+		/** Setting IDs for quiz answers based on selected countries. */
 		for (var i = 1; i < 11; i++) {
 			document.getElementById(i).value = selectedCountries[i - 1].id;
 		}
 
-		//color ten selected countries
+		/** Coloring selected countries on the map. */
 		features.forEach(function (f) {
 			f.setStyle(styleFunction(f));
 		});
 
+		/** Event listener for clicking on quiz numbers to zoom to countries. */
 		$(".quizNumber").click(function () {
 			zoomCountry();
 		});
 	}
 }
 
-//layer for highligting countries when hovered over
+/** Layer for highlighting countries when hovered over. */
 var featureOverlay = new ol.layer.Vector({
 	source: new ol.source.Vector(),
 	map: map,
@@ -240,11 +275,12 @@ var featureOverlay = new ol.layer.Vector({
 
 var highlight;
 
+/** Function to display country information when hovering over it. */
 var displayFeatureInfo = function (pixel) {
 	var feature = map.forEachFeatureAtPixel(pixel, function (feature) {
 		return feature;
 	});
-	// highlight countries when selected
+	/** Highlight countries when selected */
 	if (feature != undefined && feature.get("name") != "BB") {
 		if (feature !== highlight) {
 			if (highlight) {
@@ -258,6 +294,7 @@ var displayFeatureInfo = function (pixel) {
 	}
 };
 
+/** Event listener for pointer movement on the map. */
 map.on("pointermove", function (evt) {
 	if (evt.dragging) {
 		return;
@@ -266,7 +303,7 @@ map.on("pointermove", function (evt) {
 	displayFeatureInfo(pixel);
 });
 
-// function for coloring ten randomly selected countries
+// Function for styling countries on the map.
 function styleFunction(feature) {
 	var color, text;
 	var customStyle;
@@ -282,6 +319,7 @@ function styleFunction(feature) {
 			usedIndex++;
 			text = (i + 1).toString();
 
+			/** Adjusting style for countries in Oceania with bounding boxes. */
 			if (continent == "oceania") {
 				for (var j = 0; j < bbFeatures.length; j++) {
 					if (
@@ -320,6 +358,8 @@ function styleFunction(feature) {
 			color = "rgb(255, 255, 255)";
 		}
 	}
+
+	/** Default style for countries. */
 	customStyle = new ol.style.Style({
 		fill: new ol.style.Fill({
 			color: color,
@@ -342,7 +382,7 @@ function styleFunction(feature) {
 	return customStyle;
 }
 
-//function for zooming in Countries when its number is hovered over or clicked.
+// Function for zooming to countries when their number is clicked or hovered over.
 function zoomCountry() {
 	var text = $(event.target).text();
 	var number;
@@ -352,14 +392,14 @@ function zoomCountry() {
 		number = parseInt(text.charAt(0)) - 1;
 	}
 
-	// custom code for zooming in to countries that cross the 180 line (dateline)
+	/** Custom code for zooming to countries that cross the 180 line (dateline) */
 	if (selectedCountries[number].properties.center != 0) {
 		var center = selectedCountries[number].properties.center;
 		if (center[0] == 0) {
 			DefaultZoom();
 		} else {
 			var zoom = 4.5;
-			//Kiribati zoom
+			/** Zoom adjustment for Kiribati. */
 			if (center[0] == 191.95312499999997) {
 				zoom = 3;
 			}
@@ -380,7 +420,7 @@ function zoomCountry() {
 	}
 }
 
-// download the map - capture what is showing currently
+// Functionality for downloading the map image. - capture what is currently showing
 document.getElementById("export-png").addEventListener("click", function () {
 	map.once("postcompose", function (event) {
 		var canvas = event.context.canvas;

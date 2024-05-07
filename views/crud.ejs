@@ -1,608 +1,600 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta name="viewpoint" content="width=device-width, initial-scale= 1" />
-		<title>CRUD for geoquiz</title>
-		<link rel="icon" href="data:," />
-		<link
-			rel="stylesheet"
-			href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
-			integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
-			crossorigin="anonymous"
-		/>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<script
-			src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-			integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-			crossorigin="anonymous"
-		></script>
-		<link
-			href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-			rel="stylesheet"
-		/>
-	</head>
-	<body>
-		<% include ../fixed/nav %> <% var data; %>
-		<div class="container">
-			<div class="row justify-content-center" style="white-space: pre-wrap">
-				<p>
-					This page is to update spellings for countries. Click each spelling to
-					edit and remove. Use the add column to add a new spelling. All the
-					data including country name is
-					<span style="color: blue">case-sensitive</span>, make sure you use
-					proper spellings.
-				</p>
-			</div>
-			<div class="row justify-content-center">
-				<div class="col-xs-5 col-m-5">
-					<form class="mb-3" method="GET" action="/getCountryInfo">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text">Enter Country Name: </span>
-							</div>
-							<input
-								class="form-control col-xs-5"
-								id="countryName"
-								name="countryName"
-								type="text"
-								required
-							/>
-							<input
-								class="form-control"
-								name="option"
-								value="spelling"
-								type="hidden"
-							/>
-							<div class="input-group-append">
-								<input
-									class="btn btn-info"
-									id="getData"
-									type="submit"
-									value="submit"
-								/>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-
-			<% if ( data != undefined && data[0] == undefined) { %>
-			<div class="row justify-content-center">
-				Incorrect Country Name entered, please try again.
-			</div>
-			<% } else if (data != undefined && data[0] != undefined){ %> <% data =
-			data[0] %>
-			<table class="table" id="databaseTable" value="<%" ="data._id" %>
-				>
-				<thead>
-					<tr>
-						<th scope="col"></th>
-						<th scope="col">Content</th>
-						<th scope="col">Update</th>
-						<!-- <th scope="col">Add</th> -->
-					</tr>
-				</thead>
-				<tbody>
-					<tr value="properties.continent">
-						<th scope="row">Continent</th>
-						<td>
-							<div id="continent" class="row_data" edit_type="click">
-								<%= data.properties.continent %>
-							</div>
-						</td>
-						<td>
-							<div class="input-group">
-								<div class="input-group-prepend">
-									<span class="btn-save" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-check fa-lg"></i></button
-									></span>
-									<span class="btn-cancel" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-remove fa-lg"> </i></button
-									></span>
-								</div>
-							</div>
-						</td>
-					</tr>
-					<tr value="properties.capital">
-						<th scope="row">Capital</th>
-						<td>
-							<div id="capital" class="row_data" edit_type="click" value="0">
-								<%= data.properties.capital[0] %>
-							</div>
-						</td>
-						<td>
-							<div class="input-group">
-								<div class="input-group-prepend">
-									<span class="btn-save" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-check fa-lg"></i></button
-									></span>
-									<span class="btn-cancel" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-remove fa-lg"> </i></button
-									></span>
-								</div>
-							</div>
-						</td>
-					</tr>
-					<tr value="properties.name">
-						<th scope="row">Country</th>
-						<td>
-							<div id="name" class="row_data" edit_type="click">
-								<%= data.properties.name[0] %>
-							</div>
-						</td>
-						<!-- <td>
+  <head>
+    <meta name="viewpoint" content="width=device-width, initial-scale= 1">
+    <title>CRUD for geoquiz</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <% include ../fixed/nav %>
+    <% var data; %>
+    <div class="container">
+      <div class="row justify-content-center" style="white-space: pre-wrap;">
+        <p>
+        This page is to update spellings for countries.
+        Click each spelling to edit and remove.
+        Use the add column to add a new spelling.
+        All the data including country name is <span style="color: blue;">case-sensitive</span>,
+        make sure you use proper spellings.
+        </p>
+      </div>
+      <div class="row justify-content-center" >
+        <div class="col-xs-5 col-m-5">
+          <form class="mb-3" method="GET" action="/getCountryInfo">
             <div class="input-group" >
-              <div class="input-group-append" style="visibility: hidden">
-                <span class="btn-save" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-check fa-lg"></i> </button></span>
-                <span class="btn-cancel" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-remove fa-lg"></i> </button></span>
+              <div class="input-group-prepend">
+                <span class="input-group-text">Enter Country Name: </span>
               </div>
-           </div>
-       </td> -->
-						<td>
-							<div class="input-group">
-								<div class="input-group-prepend">
-									<span class="btn-save" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-check fa-lg"></i></button
-									></span>
-									<span class="btn-cancel" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-remove fa-lg"> </i></button
-									></span>
-								</div>
-							</div>
-						</td>
-					</tr>
-
-					<tr id="altCapital" value="altCapital">
-						<th scope="row">Alternative Answers for Capital</th>
-						<td>
-							<% var capLen = data.properties.capital.length %> <% if ( capLen >
-							1){ %> <% for (var i =1; i < capLen; i++ ){ %>
-							<div class="row_data" edit_type="click">
-								<%= data.properties.capital[i]%>
-							</div>
-							<% } %> <% } %>
-						</td>
-						<td>
-							<div class="input-group">
-								<div class="input-group-prepend">
-									<span class="btn-save" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-check fa-lg"></i></button
-									></span>
-									<span class="btn-delete" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-trash fa-lg"></i></button
-									></span>
-									<span class="btn-cancel" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-remove fa-lg"> </i></button
-									></span>
-									<span class="btn-add" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-plus fa-lg"></i></button
-									></span>
-								</div>
-								<input
-									type="text"
-									class="form-control input"
-									placeholder="add new data"
-								/>
-							</div>
-						</td>
-						<!-- <td>
-                <div class="input-group" >
-                 <input type=text class="form-control input" placeholder="add new data">
-                   <div class="input-group-append btn-add" style="visibility: hidden">
-                     <button class="btn btn-outline-info"> <i class="fa fa-plus fa-lg"></i> </button>
-                   </div>
-               </div>
-              </td> -->
-					</tr>
-					<tr value="properties.misspell_capital">
-						<th scope="row">Misspellings for Capital (3)</th>
-						<td>
-							<% var mCapLen = data.properties.misspell_capital.length %> <% if
-							(mCapLen !=0) { %> <% for (var i =0; i < mCapLen; i++ ){ %>
-							<div class="row_data" edit_type="click">
-								<%= data.properties.misspell_capital[i]%>
-							</div>
-							<% } %> <% } %>
-						</td>
-						<td>
-							<div class="input-group">
-								<div class="input-group-prepend">
-									<span class="btn-save" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-check fa-lg"></i></button
-									></span>
-									<span class="btn-delete" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-trash fa-lg"></i></button
-									></span>
-									<span class="btn-cancel" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-remove fa-lg"> </i></button
-									></span>
-									<span class="btn-add" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-plus fa-lg"></i></button
-									></span>
-								</div>
-								<input
-									type="text"
-									class="form-control input"
-									placeholder="add new data"
-								/>
-							</div>
-						</td>
-						<!-- <td>
-             <div class="input-group" >
-              <input type=text class="form-control input" placeholder="add new data">
-                <div class="input-group-append btn-add" style="visibility: hidden">
-                  <button class="btn btn-outline-info"> <i class="fa fa-plus fa-lg"></i> </button>
-                </div>
+              <input class="form-control col-xs-5" id="countryName" name="countryName" type="text" required>
+              <input class="form-control" name="option" value="spelling" type="hidden">
+              <div class="input-group-append">
+                <input class="btn btn-info" id ="getData" type="submit" value="submit">
+              </div>
             </div>
-           </td> -->
-					</tr>
-					<tr id="altName" value="altName">
-						<th scope="row">Alternative Answers for Country</th>
-						<td>
-							<% var nameLen = data.properties.name.length %> <% if ( nameLen >
-							1){ %> <% for (var i =1; i < nameLen; i++ ){ %>
-							<div class="row_data" edit_type="click">
-								<%= data.properties.name[i]%>
-							</div>
-							<% } %> <% } %>
-						</td>
-						<td>
-							<div class="input-group">
-								<div class="input-group-prepend">
-									<span class="btn-save" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-check fa-lg"></i></button
-									></span>
-									<span class="btn-delete" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-trash fa-lg"></i></button
-									></span>
-									<span class="btn-cancel" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-remove fa-lg"> </i></button
-									></span>
-									<span class="btn-add" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-plus fa-lg"></i></button
-									></span>
-								</div>
-								<input
-									type="text"
-									class="form-control input"
-									placeholder="add new data"
-								/>
-							</div>
-						</td>
-					</tr>
-					<tr value="properties.misspell_name">
-						<th scope="row">Misspellings for Country (3)</th>
-						<td>
-							<% var mNameLen = data.properties.misspell_name.length %> <% if
-							(mNameLen !=0) { %> <% for (var i =0; i < mNameLen; i++ ){ %>
-							<div class="row_data" edit_type="click">
-								<%= data.properties.misspell_name[i]%>
-							</div>
-							<% } %> <% } %>
-						</td>
-						<td>
-							<div class="input-group">
-								<div class="input-group-prepend">
-									<span class="btn-save" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-check fa-lg"></i></button
-									></span>
-									<span class="btn-delete" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-trash fa-lg"></i></button
-									></span>
-									<span class="btn-cancel" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-remove fa-lg"> </i></button
-									></span>
-									<span class="btn-add" style="visibility: hidden"
-										><button class="btn btn-outline-info">
-											<i class="fa fa-plus fa-lg"></i></button
-									></span>
-								</div>
-								<input
-									type="text"
-									class="form-control input"
-									placeholder="add new data"
-								/>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+          </form>
+        </div>
+      </div>
 
-			<%} %>
-		</div>
-		<!-- <script src="dbFunctions.js" type="text/javascript" >
-    </script> -->
-		<script type="text/javascript">
-			console.log("script");
-			var id = $("#databaseTable").attr("value");
+      <% if ( data != undefined && data[0] == undefined) { %>
+        <div class="row justify-content-center"> Incorrect Country Name entered, please try again. </div>
+      <% } else if (data != undefined && data[0] != undefined){ %>
+        <% data = data[0] %>
+        <table class="table"  id="databaseTable" value= <%= data._id %> >
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Content</th>
+              <th scope="col">Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr value = "properties.continent">
+              <th scope="row">Continent</th>
+              <td>
+                <div id="continent" class="row_data" edit_type="click"><%= data.properties.continent %></div>
+              </td>
+              <td>
+                <div class="input-group" >
+                  <div class="input-group-prepend" >
+                    <span class="btn-save" style="visibility: hidden"><button class="btn btn-outline-info"><i class="fa fa-check fa-lg"></i></button></span>
+                    <span class="btn-cancel" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-remove fa-lg"> </i></button></span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr value ="properties.capital">
+              <th scope="row">Capital</th>
+              <td>
+                <div id ="capital" class="row_data" edit_type="click" value ="0">
+                  <%= data.properties.capital[0] %>
+                </div>
+              </td>
+              <td>
+                <div class="input-group" >
+                  <div class="input-group-prepend" >
+                    <span class="btn-save" style="visibility: hidden"><button class="btn btn-outline-info"><i class="fa fa-check fa-lg"></i></button></span>
+                    <span class="btn-cancel" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-remove fa-lg"> </i></button></span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr value ="properties.name" >
+              <th scope="row">Country</th>
+              <td>
+                <div id="name" class="row_data" edit_type="click">
+                  <%= data.properties.name[0] %>
+                </div>
+              </td>
+              <!-- <td>
+                <div class="input-group" >
+                  <div class="input-group-append" style="visibility: hidden">
+                    <span class="btn-save" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-check fa-lg"></i> </button></span>
+                    <span class="btn-cancel" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-remove fa-lg"></i> </button></span>
+                  </div>
+                </div>
+              </td> -->
+              <td>
+                <div class="input-group" >
+                  <div class="input-group-prepend" >
+                    <span class="btn-save" style="visibility: hidden"><button class="btn btn-outline-info"><i class="fa fa-check fa-lg"></i></button></span>
+                    <span class="btn-cancel" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-remove fa-lg"> </i></button></span>
+                  </div>
+                </div>
+              </td>
+            </tr>
 
-			$(document).on("click", ".row_data", function (event) {
-				event.preventDefault();
+            <tr id="altCapital" value ="altCapital">
+              <th scope="row">Alternative Answers for Capital</th>
+              <td>
+                <% var capLen = data.properties.capital.length  %>
+                <% if ( capLen > 1){ %>
+                  <% for (var i =1; i < capLen; i++ ){ %>
+                    <div class="row_data" edit_type="click">
+                      <%= data.properties.capital[i]%>
+                    </div>
+                  <%  } %>
+                <% } %>
+              </td>
+              <td>
+                <div class="input-group" >
+                  <div class="input-group-prepend" >
+                    <span class="btn-save" style="visibility: hidden"><button class="btn btn-outline-info"><i class="fa fa-check fa-lg"></i></button></span>
+                    <span class="btn-delete" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-trash fa-lg"></i> </button></span>
+                    <span class="btn-cancel" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-remove fa-lg"> </i></button></span>
+                    <span class="btn-add" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-plus fa-lg"></i> </button></span>
+                  </div>
+                  <input type=text class="form-control input" placeholder="add new data">
+                </div>
 
-				$(".row_data").attr("clicked", false);
-				if ($(this).attr("edit_type") == "button") {
-					return false;
-				}
-				var tbl_row = $(this).closest("tr");
-				$(".btn-add").css({ visibility: "hidden" });
-				$(".btn-save").css({ visibility: "hidden" });
-				$(".btn-delete").css({ visibility: "hidden" });
-				$(".btn-cancel").css({ visibility: "hidden" });
+              </td>
+              <!-- <td>
+                <div class="input-group" >
+                  <input type=text class="form-control input" placeholder="add new data">
+                    <div class="input-group-append btn-add" style="visibility: hidden">
+                      <button class="btn btn-outline-info"> <i class="fa fa-plus fa-lg"></i> </button>
+                    </div>
+                </div>
+              </td> -->
+            </tr>
+            <tr value ="properties.misspell_capital">
+              <th scope="row">Misspellings for Capital (3)</th>
+              <td>
+                <% var mCapLen = data.properties.misspell_capital.length  %>
+                <% if (mCapLen !=0) { %>
+                  <% for (var i =0; i < mCapLen; i++ ){ %>
+                    <div class="row_data" edit_type="click">
+                      <%= data.properties.misspell_capital[i]%>
+                    </div>
+                  <% } %>
+                <% } %>
+              </td>
+              <td>
+                <div class="input-group" >
+                  <div class="input-group-prepend" >
+                    <span class="btn-save" style="visibility: hidden"><button class="btn btn-outline-info"><i class="fa fa-check fa-lg"></i></button></span>
+                    <span class="btn-delete" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-trash fa-lg"></i> </button></span>
+                    <span class="btn-cancel" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-remove fa-lg"> </i></button></span>
+                    <span class="btn-add" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-plus fa-lg"></i> </button></span>
+                  </div>
+                  <input type=text class="form-control input" placeholder="add new data">
+                </div>
+              </td>
+              <!-- <td>
+                <div class="input-group" >
+                  <input type=text class="form-control input" placeholder="add new data">
+                  <div class="input-group-append btn-add" style="visibility: hidden">
+                    <button class="btn btn-outline-info"> <i class="fa fa-plus fa-lg"></i> </button>
+                  </div>
+                </div>
+              </td> -->
+            </tr>
+            <tr id="altName" value ="altName">
+              <th scope="row">Alternative Answers for Country</th>
+              <td>
+                <% var nameLen = data.properties.name.length  %>
+                <% if ( nameLen > 1){ %>
+                  <% for (var i =1; i < nameLen; i++ ){ %>
+                    <div class="row_data" edit_type="click">
+                      <%= data.properties.name[i]%>
+                    </div>
+                  <%  } %>
+                <% } %>
+              </td>
+              <td>
+                <div class="input-group" >
+                  <div class="input-group-prepend" >
+                    <span class="btn-save" style="visibility: hidden"><button class="btn btn-outline-info"><i class="fa fa-check fa-lg"></i></button></span>
+                    <span class="btn-delete" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-trash fa-lg"></i> </button></span>
+                    <span class="btn-cancel" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-remove fa-lg"> </i></button></span>
+                    <span class="btn-add" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-plus fa-lg"></i> </button></span>
+                  </div>
+                  <input type=text class="form-control input" placeholder="add new data">
+                </div>
+              </td>
+            </tr>
+            <tr value ="properties.misspell_name">
+              <th scope="row">Misspellings for Country (3)</th>
+                <td>
+                  <% var mNameLen = data.properties.misspell_name.length  %>
+                  <% if (mNameLen !=0) { %>
+                    <% for (var i =0; i < mNameLen; i++ ){ %>
+                        <div class="row_data" edit_type="click">
+                          <%= data.properties.misspell_name[i]%>
+                        </div>
+                    <%  } %>
+                <% } %>
+              </td>
+              <td>
+                <div class="input-group" >
+                  <div class="input-group-prepend" >
+                    <span class="btn-save" style="visibility: hidden"><button class="btn btn-outline-info"><i class="fa fa-check fa-lg"></i></button></span>
+                    <span class="btn-delete" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-trash fa-lg"></i> </button></span>
+                    <span class="btn-cancel" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-remove fa-lg"> </i></button></span>
+                    <span class="btn-add" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-plus fa-lg"></i> </button></span>
+                  </div>
+                  <input type=text class="form-control input" placeholder="add new data">
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      <%} %>
+    </div>
 
-				tbl_row.find(".btn-save").css({ visibility: "visible" });
-				tbl_row.find(".btn-cancel").css({ visibility: "visible" });
-				tbl_row.find(".btn-delete").css({ visibility: "visible" });
-				tbl_row.find(".row_data").attr("clicked", false);
+    <script type="text/javascript">
+      var id = $("#databaseTable").attr('value');
 
-				$(this).attr("original_entry", $(this).html());
-				$(this).attr("clicked", true);
-				//    console.log($(this).attr('clicked'));
-				// console.log($(this).attr('selected').val());
+      $(document).on('click', '.row_data', function(event)
+      {
+    	  event.preventDefault();
 
-				//make div editable
-				$(this).closest("div").attr("contenteditable", "true");
-				//add bg css
-				$(this).addClass("bg-warning").css("padding", "5px");
+        $('.row_data').attr('clicked', false);
+    	  if($(this).attr('edit_type') == 'button')
+    	  {
+    		  return false;
+    	  }
 
-				$(this).focus();
-				$(this).attr("edit_type", "button");
-			});
+        var tbl_row = $(this).closest('tr');
 
-			$(document).on("click", ".btn-cancel", function (event) {
-				event.preventDefault();
-				var tbl_row = $(this).closest("tr");
-				//	var row_id = tbl_row.attr('row_id');
-				//hide save and cacel buttons
-				tbl_row.find(".btn-save").css({ visibility: "hidden" });
-				tbl_row.find(".btn-cancel").css({ visibility: "hidden" });
-				tbl_row.find(".btn-delete").css({ visibility: "hidden" });
-				tbl_row.find(".btn-add").css({ visibility: "hidden" });
+        $('.btn-add').css({"visibility": "hidden"});
+        $('.btn-save').css({"visibility": "hidden"});
+        $('.btn-delete').css({"visibility": "hidden"});
+        $('.btn-cancel').css({"visibility": "hidden"});
 
-				//make the whole row editable
-				tbl_row
-					.find(".row_data")
-					.attr("edit_type", "click")
-					.removeClass("bg-warning")
-					.css("padding", "");
+        tbl_row
+          .find('.btn-save')
+          .css({"visibility": "visible"});
+	      tbl_row
+          .find('.btn-cancel')
+          .css({"visibility": "visible"});
+        tbl_row
+          .find('.btn-delete'
+          ).css({"visibility": "visible"});
+        tbl_row
+          .find('.row_data')
+          .attr("clicked", false);
 
-				tbl_row.find(".row_data").each(function (index, val) {
-					$(this).html($(this).attr("original_entry"));
-				});
+        $(this).attr('original_entry', $(this).html());
+        $(this).attr('clicked', true);
+        
+        // console.log($(this).attr('clicked'));
+        // console.log($(this).attr('selected').val());
 
-				tbl_row.find(".input").val("");
-			});
+    	  // Make div editable
+    	  $(this)
+          .closest('div')
+          .attr('contenteditable', 'true');
+    	  
+        // Add background css
+    	  $(this)
+          .addClass('bg-warning')
+          .css('padding','5px');
 
-			$(document).on("click", ".btn-delete", function (event) {
-				event.preventDefault();
-				var tbl_row = $(this).closest("tr");
-				var field = tbl_row.attr("value");
-				var dataToRemove = $(".row_data[clicked=true]").html().trim();
-				console.log(dataToRemove);
-				//hide save and cacel buttons
-				tbl_row.find(".btn-save").css({ visibility: "hidden" });
-				tbl_row.find(".btn-cancel").css({ visibility: "hidden" });
-				tbl_row.find(".btn-add").css({ visibility: "hidden" });
-				tbl_row.find(".btn-delete").css({ visibility: "hidden" });
+    	  $(this).focus();
+        $(this).attr('edit_type', 'button');
+      });
 
-				if (field == "altName") {
-					field = "properties.name";
-				}
-				if (field == "altCapital") {
-					field = "properties.capital";
-				}
+      $(document).on('click', '.btn-cancel', function(event)
+    	{
+    		event.preventDefault();
+    		var tbl_row = $(this).closest('tr');
+    	  
+        // var row_id = tbl_row.attr('row_id');
+    		
+        // Hide save and cancel buttons
+    		tbl_row
+          .find('.btn-save')
+          .css({"visibility": "hidden"});
+    		tbl_row
+          .find('.btn-cancel')
+          .css({"visibility": "hidden"});
+        tbl_row
+          .find('.btn-delete')
+          .css({"visibility": "hidden"});
+        tbl_row
+          .find('.btn-add')
+          .css({"visibility": "hidden"});
 
-				//make the whole row editable
-				tbl_row
-					.find(".row_data")
-					.attr("edit_type", "click")
-					.removeClass("bg-warning")
-					.css("padding", "");
+    		// Make the whole row editable
+    		tbl_row.find('.row_data')
+    		  .attr('edit_type', 'click')
+    		  .removeClass('bg-warning')
+    		  .css('padding','')
 
-				$.ajax({
-					url: "/deleteData",
-					type: "POST",
-					contentType: "application/json",
-					data: JSON.stringify({
-						id: id,
-						field: field,
-						value: dataToRemove,
-					}),
-					dataType: "json",
-					success: function (data) {
-						if (data.nModified > 0) location.reload();
-						else alert("Failed to Remove");
-					},
-				});
-			});
+    		tbl_row
+          .find('.row_data')
+          .each(function(index, val)
+    		  {
+    			  $(this).html( $(this).attr('original_entry') );
+    		  });
 
-			//make cancel and add button appear
-			$(document).on("click", ".input", function (event) {
-				$(".btn-add").css({ visibility: "hidden" });
-				$(".btn-save").css({ visibility: "hidden" });
-				$(".btn-delete").css({ visibility: "hidden" });
-				$(".btn-cancel").css({ visibility: "hidden" });
-				event.preventDefault();
-				var tbl_row = $(this).closest("tr");
-				//hide save and cacel buttons
-				tbl_row.find(".btn-add").css({ visibility: "visible" });
-				tbl_row.find(".btn-cancel").css({ visibility: "visible" });
-				$(this).attr("edit_type", "button");
-			});
+        tbl_row.find('.input').val("");
+    	});
 
-			//Add the data that was added
-			$(document).on("click", ".btn-add", function (event) {
-				console.log("add");
-				event.preventDefault();
-				var tbl_row = $(this).closest("tr");
-				var field = tbl_row.attr("value");
+      $(document).on('click', '.btn-delete', function(event)
+      {
+        event.preventDefault();
+        
+        var tbl_row = $(this).closest('tr');
+        var field = tbl_row.attr('value');
+        var dataToRemove = $(".row_data[clicked=true]").html().trim();
+                
+        // Hide save and cancel buttons
+        tbl_row
+          .find('.btn-save')
+          .css({"visibility": "hidden"});
+        tbl_row
+          .find('.btn-cancel')
+          .css({"visibility": "hidden"});
+        tbl_row
+          .find('.btn-add')
+          .css({"visibility": "hidden"});
+        tbl_row
+          .find('.btn-delete')
+          .css({"visibility": "hidden"});
 
-				var dataToAdd = tbl_row.find(".input").val();
+        if (field == "altName")
+        {
+          field = "properties.name";
+        }
+        if (field =="altCapital")
+        {
+          field= "properties.capital";
+        }
 
-				//  var id = $("#databaseTable").attr('value');
-				if (field == "altName") {
-					field = "properties.name";
-				}
-				if (field == "altCapital") {
-					field = "properties.capital";
-				}
+        // Make the whole row editable
+        tbl_row
+          .find('.row_data')
+          .attr('edit_type', 'click')
+          .removeClass('bg-warning')
+          .css('padding','');
 
-				$.ajax({
-					url: "/addData",
-					type: "POST",
-					contentType: "application/json",
-					data: JSON.stringify({
-						id: id,
-						field: field,
-						value: dataToAdd,
-					}),
-					dataType: "json",
-					success: function (data) {
-						console.log(data);
-						if (data.nModified == 0) {
-							alert("Spelling already exists in the database");
-						} else if (data.nModified == "Input needed") {
-							alert(data.nModified);
-						}
-						location.reload();
-						//hide save and cacel buttons
-						tbl_row.find(".btn-save").css({ visibility: "hidden" });
-						tbl_row.find(".btn-cancel").css({ visibility: "hidden" });
-					},
-				});
-			});
+        $.ajax({
+          url: '/deleteData',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            id: id,
+            field: field,
+            value: dataToRemove
+          }),
+          dataType: 'json',
+          success: function(data)
+          {
+            if (data.nModified > 0) 
+            {
+              location.reload();
+            }
+            else 
+            {
+              alert("Failed to Remove");
+            }
+          }
+        });
+      });
 
-			//Send Update Request
-			$(document).on("click", ".btn-save", function (event) {
-				event.preventDefault();
-				console.log("save");
-				var tbl_row = $(this).closest("tr");
-				$(this).attr("edit_type", "click");
-				//Field to update in a database
-				var field = tbl_row.attr("value");
+      // Make cancel and add button appear
+      $(document).on('click', '.input', function(event)
+      {
+        $('.btn-add').css({"visibility": "hidden"});
+        $('.btn-save').css({"visibility": "hidden"});
+        $('.btn-delete').css({"visibility": "hidden"});
+        $('.btn-cancel').css({"visibility": "hidden"});
+      	
+        event.preventDefault();
+        
+        var tbl_row = $(this).closest('tr');
+        
+        // Hide save and cancel buttons
+        tbl_row.find('.btn-add').css({"visibility": "visible"});
+        tbl_row.find('.btn-cancel').css({"visibility": "visible"});
+        $(this).attr('edit_type', 'button');
+      });
 
-				//Formatting the data in an array form without empty strings.
-				var newData = tbl_row.find(".row_data").text().trim().split("\n");
-				newData = newData.map((s) => s.trim());
-				newData = newData.filter(Boolean);
-				console.log(newData);
-				//send field: new array
-				console.log(tbl_row.find(".row_data").text());
-				console.log(field);
+      // Add the data that was added
+      $(document).on('click', '.btn-add', function(event)
+      {
+        console.log("add")
+        
+        event.preventDefault();
+      
+        var tbl_row = $(this).closest('tr');
+        var field = tbl_row.attr('value');
+        var dataToAdd = tbl_row.find(".input").val();
+        
+        // var id = $("#databaseTable").attr('value');
+        
+        if (field == "altName")
+        {
+          field = "properties.name"
+        }
+        
+        if (field == "altCapital")
+        {
+          field= "properties.capital"
+        }
 
-				//hide save and cacel buttons
+        $.ajax({
+          url: '/addData',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            id: id,
+            field: field,
+            value: dataToAdd
+          }),
+          dataType: 'json',
+          success: function(data)
+          {
+            if (data.nModified == 0)
+            {
+              alert("Spelling already exists in the database");
+            }
 
-				var name; //can be capital or name depending on what field to update
-				if (field == "altCapital") {
-					name = $("#capital").html();
-				} else if (field == "altName") {
-					name = $("#name").html();
-				} else if (field == "properties.name") {
-					name = $("#name").html();
-					var otherNames = $("#altName")
-						.find(".row_data")
-						.text()
-						.trim()
-						.split("\n");
-					if (otherNames != undefined) {
-						otherNames = otherNames.map((s) => s.trim()).filter(Boolean);
-						newData = newData.concat(otherNames);
-						console.log(newData);
-					}
-				} else if (field == "properties.capital") {
-					name = $("#capital").html();
-					var otherCaps = $("#altCapital")
-						.find(".row_data")
-						.text()
-						.trim()
-						.split("\n");
-					if (otherCaps != undefined) {
-						otherCaps = otherCaps.map((s) => s.trim()).filter(Boolean);
-						newData = newData.concat(otherCaps);
-						console.log(newData);
-					}
-				}
-				console.log("name ---- " + name);
+            else if (data.nModified == "Input needed")
+            {
+              alert(data.nModified);
+            }
+            
+            location.reload();
+            
+            // Hide save and cancel buttons
+            tbl_row
+              .find('.btn-save')
+              .css({"visibility": "hidden"});
+            tbl_row
+              .find('.btn-cancel')
+              .css({"visibility": "hidden"});
+          }
+        });
+      });
 
-				$.ajax({
-					url: "/update",
-					type: "PUT",
+      // Send Update Request
+      $(document).on('click', '.btn-save', function(event)
+      {
+        event.preventDefault();
+        
+        console.log("save")
+        
+        var tbl_row = $(this).closest('tr');
+        $(this).attr('edit_type', 'click');
+        
+        // Field to update in a database
+        var field = tbl_row.attr('value');
 
-					contentType: "application/json",
-					data: JSON.stringify({
-						id: id,
-						name: name,
-						field: field,
-						value: newData,
-					}),
-					dataType: "json",
-					success: function (data) {
-						if (data.n > 0) {
-							console.log(data);
-							console.log("Success update request");
-						} else {
-							location.reload();
-							alert("Failed to save");
-						}
-					},
-				});
-				tbl_row.find(".btn-save").css({ visibility: "hidden" });
-				tbl_row.find(".btn-cancel").css({ visibility: "hidden" });
-				tbl_row.find(".btn-delete").css({ visibility: "hidden" });
-			});
+        // Formatting the data in an array form without empty strings.
+        var newData = tbl_row.find('.row_data').text().trim().split('\n');
+        newData = newData.map(s =>s.trim());
+        newData = newData.filter(Boolean);
+        
+        console.log(newData);
+        
+        // Send field: new array
+        console.log(tbl_row.find('.row_data').text());
+        console.log(field);
 
-			$(document).on("focusout", ".row_data", function (event) {
-				var row_div = $(this)
-					.removeClass("bg-warning") //add bg css
-					.css("padding", "");
+        // Can be capital or name depending on what field to update
+        var name;
+        if (field == "altCapital")
+        {
+          name = $("#capital").html()
+        }
+        else if (field == "altName")
+        {
+          name = $('#name').html();
+        }
+        else if(field == "properties.name")
+        {
+          name = $('#name').html();
+          var otherNames = $("#altName").find('.row_data').text().trim().split('\n');
+          if (otherNames != undefined)
+          {
+            otherNames = otherNames.map(s=>s.trim()).filter(Boolean)
+            newData = newData.concat(otherNames);
+            console.log(newData);
+          }
+        }
+        else if(field == "properties.capital")
+        {
+          name = $("#capital").html();
+          var otherCaps = $("#altCapital").find('.row_data').text().trim().split('\n');
+          if (otherCaps != undefined)
+          {
+            otherCaps = otherCaps.map(s=>s.trim()).filter(Boolean);
+            newData = newData.concat(otherCaps);
+            console.log(newData);
+          }
+        }
 
-				event.preventDefault();
-				if ($(this).attr("edit_type") == "button") {
-					$(this).attr("edit_type", "click");
-					return false;
-				}
-				// $(this).attr('clicked', false);
-				$(".btn-add").css({ visibility: "hidden" });
-				$(".btn-save").css({ visibility: "hidden" });
-				$(".btn-delete").css({ visibility: "hidden" });
-				$(".btn-cancel").css({ visibility: "hidden" });
-			});
-			$(document).on("focusout", ".input", function (event) {
-				event.preventDefault();
-				console.log("Edit type focus out input");
-				if ($(this).attr("edit_type") == "button") {
-					$(this).attr("edit_type", "click");
-					return false;
-				}
-				// $(this).attr('clicked', false);
-				$(".btn-add").css({ visibility: "hidden" });
-				$(".btn-save").css({ visibility: "hidden" });
-				$(".btn-delete").css({ visibility: "hidden" });
-				$(".btn-cancel").css({ visibility: "hidden" });
+        console.log("name ---- " + name);
 
-				event.preventDefault();
-			});
-		</script>
-	</body>
-	<!-- <script type="text/javascript" src="functions2.js"></script> -->
+        $.ajax({
+          url: '/update',
+          type: 'PUT',
+
+          contentType: 'application/json',
+          data: JSON.stringify({
+            id: id,
+            name: name,
+            field: field,
+            value: newData
+          }),
+          dataType: 'json',
+          success: function(data)
+          {
+            if (data.n > 0)
+            {
+              console.log(data);
+              console.log("Success update request");
+            }
+            else
+            {
+              location.reload()
+              alert("Failed to save");
+            }
+          }
+        });
+
+        tbl_row
+          .find('.btn-save')
+          .css({"visibility": "hidden"});
+        tbl_row
+          .find('.btn-cancel')
+          .css({"visibility": "hidden"});
+        tbl_row
+          .find('.btn-delete')
+          .css({"visibility": "hidden"});
+      });
+
+      $(document).on('focusout', '.row_data', function(event)
+      {
+
+        // Add background CSS
+        var row_div = $(this)
+                        .removeClass('bg-warning') 
+                        .css('padding','');
+
+        event.preventDefault();
+
+        if($(this).attr('edit_type') == 'button')
+        {
+          $(this).attr('edit_type', 'click');
+          return false;
+        }
+
+        // $(this).attr('clicked', false);
+        
+        $('.btn-add').css({"visibility": "hidden"});
+        $('.btn-save').css({"visibility": "hidden"});
+        $('.btn-delete').css({"visibility": "hidden"});
+        $('.btn-cancel').css({"visibility": "hidden"});
+      });
+
+      $(document).on('focusout', '.input', function(event)
+      {
+        event.preventDefault();
+        
+        console.log("Edit type focus out input")
+        
+        if($(this).attr('edit_type') == 'button')
+        {
+          $(this).attr('edit_type','click');
+          return false;
+        }
+        
+        // $(this).attr('clicked', false);
+        
+        $('.btn-add').css({"visibility": "hidden"});
+        $('.btn-save').css({"visibility": "hidden"});
+        $('.btn-delete').css({"visibility": "hidden"});
+        $('.btn-cancel').css({"visibility": "hidden"});
+
+        event.preventDefault();
+      });
+    </script>
+  </body>
 </html>

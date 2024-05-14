@@ -94,17 +94,19 @@
           </tr>
 
           <tr value="geometry.coordinates">
-            <th scope="row">Geometry Coordinates</th>
-            <td>
-              <div class="row_data" edit_type="click">
-                <%= JSON.stringify(data.geometry.coordinates)%>
-                <br>
+            <th scope="row">
+              Geometry Coordinates
+            </th>
+            <td style="width: 100%">
+              <div style="min-height: 80px; max-height: 240px; overflow: auto">
+                <span id="coordinatesData" style="display: none"><%= JSON.stringify(data.geometry.coordinates)%> </span>
+                <p id="coordinatesMessage">Coordinates are hidden. Click "Toggle" to view them.</p>
               </div>
             </td>
             <td>
-              <span class="btn-save" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-check fa-lg"></i></button></span>
-              <span class="btn-delete" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-trash fa-lg"> </i></button></span>
-              <span class="btn-cancel" style="visibility: hidden"><button class="btn btn-outline-info"> <i class="fa fa-remove fa-lg"></i></button></span>
+              <button id="toggleCoordinates" class="btn btn-outline-info">
+                <i id="toggleButtonIcon" class="fa fa-eye fa-lg"></i>
+              </button>
             </td>
           </tr>
 
@@ -352,12 +354,8 @@
         // Formatting the data in an array form without empty strings.
         var newData = tbl_row.find('.row_data').text().trim().split('\n');
         newData = newData.map(s =>s.trim());
-        newData = newData.filter(Boolean)
+        newData = newData.filter(Boolean);
       
-        console.log(newData)
-        console.log(tbl_row.find('.row_data').text());
-        console.log(field);
-
         // Hide save and cancel buttons
         tbl_row.find('.btn-save').css({"visibility": "hidden"});
         tbl_row.find('.btn-cancel').css({"visibility": "hidden"});
@@ -390,8 +388,6 @@
           console.log(newData);
         }
 
-        console.log("name ---- " + name);
-
         $.ajax({
           url: '/update',
           type: 'PUT',
@@ -406,6 +402,12 @@
           dataType: 'json',
           success: function(data)
           {
+            console.log(JSON.stringify({
+              id: id,
+              name: name,
+              field: field,
+              value: newData
+            }));
             console.log(data);
             console.log("Success update request");
           }
@@ -451,6 +453,50 @@
         }),
       });
 
+      /** Declaration of variables to hold information about the country continent, map center, zoom level. */
+      var center, zoom, minzoom;
+
+      /* For setting zoom and center of the map of each continent */
+      var continent = countryFeatures.properties.continent;
+
+      switch (continent) {
+        case "africa":
+          center = [24, -1];
+          zoom = 1.75;
+          minzoon = 2;
+          break;
+      
+        case "asia":
+          center = [120, 36];
+          zoom = 0.75;
+          minzoom = 1.3;
+          break;
+      
+        case "europe":
+          center = [9, 28];
+          zoom = 0.85;
+          minzoom = 1.3;
+          break;
+      
+        case "south-america":
+          center = [-58, -18];
+          zoom = 1;
+          minzoom = 1.3;
+          break;
+      
+        case "north-america":
+          zoom = 0.75;
+          center = [-100, 64];
+          minzoom = 1.3;
+          break;
+      
+        case "oceania":
+          zoom = 2.25;
+          center = [172, -24];
+          minzoom = 2;
+          break;
+      }
+
       /* Creating the map with the defined center, zoom, and layers */
       var map = new ol.Map({
         target: 'map',
@@ -461,11 +507,93 @@
           vectorLayer
         ],
         view: new ol.View({
-          center: ol.proj.fromLonLat([93, 22]), 
-          zoom: 2, 
-          minzoom: 1.3 
+          center: ol.proj.fromLonLat(center), 
+          zoom: zoom, 
+          minzoom: minzoom,
+          maxResolution: 72000
         })
       });
+
+      var modify = new ol.interaction.Modify({
+        source: vectorSource,
+        style: new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: "rgba(255, 255, 255, 0.2)"
+          }),
+          stroke: new ol.style.Stroke({
+            color: "#ffcc33",
+            width: 2
+          }),
+          image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+              color: "#ffcc33",
+            })
+          })
+        }),
+        deleteCondition: function(event) 
+        {
+          return ol.events.condition.shiftKeyOnly(event) &&
+                 ol.events.condition.singleClick(event);
+        }
+      });
+
+      map.addInteraction(modify);
+
+      modify.on('modifyend', function(event) {
+        var modifiedFeature = event.features.getArray()[0];
+        var modifiedCoordinates = modifiedFeature.getGeometry().getCoordinates();
+        
+        // Transform the coordinates from EPSG:3857 to EPSG:4326
+        var transformedCoordinates = modifiedCoordinates.map(function(polygon) {
+          return polygon.map(function(ring) {
+            return ring.map(function(coordinate) {
+              return ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326');
+            });
+          });
+        });
+
+        var newData = JSON.stringify(transformedCoordinates).trim().split('\n');
+        newData = newData.map(s =>s.trim());
+        newData = newData.filter(Boolean);
+        
+        $.ajax({
+          url: '/update',
+          type: 'PUT',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            id: countryFeatures._id,
+            field: "geometry.coordinates",
+            value: newData
+          }),
+          dataType: 'json',
+          success: function(data) {
+            console.log('Geometry coordinates updated successfully:', data);
+
+            // Update the table with the new coordinates
+            $('#databaseTable').find('tr[value="geometry.coordinates"] .row_data').html(JSON.stringify(transformedCoordinates));
+          },
+          error: function(xhr, status, error) {
+            console.error('Failed to update geometry coordinates:', error);
+          }
+        }); 
+      });
+    </script>
+    <script type="text/javascript">
+      function toggleCoordinatesVisibility() {
+        var coordinatesDiv = document.getElementById('coordinatesData');
+        var coordinatesMessage = document.getElementById('coordinatesMessage');
+        if (coordinatesDiv.style.display === 'none') {
+          coordinatesDiv.style.display = 'block';
+          coordinatesMessage.style.display = 'none';
+        } else {
+          coordinatesDiv.style.display = 'none';
+          coordinatesMessage.style.display = 'block';
+        }
+      }
+
+      // Attach click event to the button
+      document.getElementById('toggleCoordinates').addEventListener('click', toggleCoordinatesVisibility);
     </script>
   </body>
 </html>

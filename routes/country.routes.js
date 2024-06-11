@@ -113,6 +113,7 @@ router.post("/selectContinent", countries.selectContinent);
 //***********************************************************************************************
 //***********************************************************************************************
 router.post("/addData", countries.addData);
+router.post('/saveSplitCountries', countries.saveSplitCountries);
 router.post("/deleteData", countries.delete);
 router.post("/addCountry", countries.create);
 router.post("/removeCountry", countries.removeCountry);

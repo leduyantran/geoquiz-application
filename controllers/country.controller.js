@@ -469,7 +469,6 @@ exports.create = function CreateHandler(request, response){
 exports.removeCountry = function DeleteHandler(request, response){
 	console.log("delete");
 	var data = request.body;
-	console.log(data)
 	Country.deleteOne(
 		{"_id": data.id},
 	).then(res=>{
@@ -545,6 +544,47 @@ exports.fileUpload = function handlefileUpload(request, response){
 
 
 }
+
+exports.saveSplitCountries = async (req, res) => {
+	try {
+			// Extract data from the request
+			const { originalCountryId, splitCountries } = req.body;
+			if (!originalCountryId || !splitCountries || !Array.isArray(splitCountries)) {
+					return res.status(400).send({
+							message: "Invalid data format. 'originalCountryId' and 'splitCountries' are required."
+					});
+			}
+
+			// Add each split country to the database
+			for (const countryData of splitCountries) {
+					// Create the country document in the database
+					await Country.create({
+						"type": countryData.type,
+						"properties": countryData.properties,
+						"geometry": countryData.geometry,
+					});
+			}
+
+			// Delete the original country
+			const currCountry = await Country.findOne({ "properties.id": originalCountryId });
+
+			if (currCountry) {
+				console.log(currCountry._id.toString());
+				await Country.deleteOne({ "_id": currCountry._id });
+			}
+
+			// Send success response
+			res.status(200).send({
+					message: "Split countries saved and original country deleted successfully."
+			});``
+
+	} catch (error) {
+			console.error("Error saving split countries:", error);
+			res.status(500).send({
+					message: "An error occurred while saving split countries."
+			});
+	}
+};
 
 function updateFromFile(name, option,spellings){
 			return Country.updateOne(

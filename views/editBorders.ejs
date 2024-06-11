@@ -13,6 +13,32 @@
     <script src="/ol.js" type="text/javascript"></script>
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
+    <style>
+      .map-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        width: 100%;
+        height: 400px;
+        margin-bottom: 20px;
+        gap: 16px;
+      }
+      .map-name {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 12px;
+        align-items: center;
+        width: 100%;
+        padding: 0;
+      }
+      .map-name label {
+        margin: 0;
+      }
+      .map-name-input {
+        flex: 1;
+      }
+  </style>
   </head>
   <body>
     <% include ../fixed/nav %>
@@ -115,6 +141,17 @@
             <td>
               <div id="map">
               </div>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Split Country</th>
+            <td>
+              <div id="mapsContainer"></div>
+            </td>
+            <td>
+              <input type="number" id="splitCount" min="2" value="2">
+              <button id="splitButton">Split Country</button>
+              <button id="saveButton">Save</button>
             </td>
           </tr>
         </tbody>
@@ -594,6 +631,260 @@
 
       // Attach click event to the button
       document.getElementById('toggleCoordinates').addEventListener('click', toggleCoordinatesVisibility);
+    </script>
+    <script>
+      var splitCountriesData = [];
+      /* Features of the country - GeoJSON */
+      var countryFeatures = <%- JSON.stringify(data) %>;
+      var orgCountryName = countryFeatures.properties.name[0];
+      /* GeoJSON of the country */
+      var countryGeoJSON = {
+        "type": "FeatureCollection",
+        "features": [countryFeatures]
+      };
+      document.getElementById('splitButton').addEventListener('click', function() {
+          var splitCount = document.getElementById('splitCount').value;
+          var mapsContainer = document.getElementById('mapsContainer');
+          mapsContainer.innerHTML = '';
+          for (var i = 0; i < splitCount; i++) {
+              var mapDiv = document.createElement('div');
+              mapDiv.id = 'map-' + (i + 1);
+              mapDiv.className = 'map-container';
+              mapsContainer.appendChild(mapDiv);
+
+              // Create input field for entering name
+              var mapNameDiv = document.createElement('div');
+              mapNameDiv.className = 'map-name';
+              var nameLabel = document.createElement('label');
+              nameLabel.for = 'name-' + (i + 1);
+              nameLabel.textContent = 'Name for country ' + (i + 1) + ':';
+              var nameInput = document.createElement('input');
+              nameInput.type = 'text';
+              nameInput.id = 'name-' + (i + 1);
+              nameInput.value = orgCountryName + " " + (i + 1);
+              nameInput.className = 'map-name-input';
+              nameInput.disabled = true;
+              nameInput.required = true;
+              mapNameDiv.appendChild(nameLabel);
+              mapNameDiv.appendChild(nameInput);
+              mapDiv.appendChild(mapNameDiv);
+  
+            var initCountryData = {
+              "type": "Feature",
+              "properties": {
+                "name": [orgCountryName + " " + (i+1)],
+                "id": orgCountryName + " " + (i + 1),
+                "capital": [],
+                "misspell_name": [],
+                "misspell_capital": [],
+                "continent": countryFeatures.properties.continent, 
+              },
+              "geometry": {
+                "type": countryFeatures.geometry.type,
+                "coordinates": countryFeatures.geometry.coordinates,
+              }
+            }
+  
+            splitCountriesData.push(initCountryData);
+            console.log(splitCountriesData);
+          }
+
+
+          for (let i = 1; i <= splitCount; i++) {
+            let mapTarget = 'map-' + i;
+            console.log('Initializing map for:', mapTarget); // Debugging line
+
+            /* Adding GeoJSON of the country to the map */
+            var vectorSource = new ol.source.Vector({
+              features: new ol.format.GeoJSON().readFeatures(countryGeoJSON, {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+              })
+            });
+
+            /* Creating a vector layer for displaying country boundaries on the map. */
+            var vectorLayer = new ol.layer.Vector({
+              source: vectorSource,
+              style: new ol.style.Style({
+                fill: new ol.style.Fill({
+                  color: 'rgba(255, 255, 255, 0.2)'
+                }),
+                stroke: new ol.style.Stroke({
+                  color: '#ffcc33',
+                  width: 2
+                }),
+                image: new ol.style.Circle({
+                  radius: 7,
+                  fill: new ol.style.Fill({
+                    color: '#ffcc33',
+                  })
+                })
+              }),
+            });
+
+            /** Declaration of variables to hold information about the country continent, map center, zoom level. */
+            var center, zoom, minzoom;
+      
+            /* For setting zoom and center of the map of each continent */
+            var continent = countryFeatures.properties.continent;
+      
+            switch (continent) {
+              case "africa":
+                center = [24, -1];
+                zoom = 1.75;
+                minzoon = 2;
+                break;
+            
+              case "asia":
+                center = [120, 36];
+                zoom = 0.75;
+                minzoom = 1.3;
+                break;
+            
+              case "europe":
+                center = [9, 28];
+                zoom = 0.85;
+                minzoom = 1.3;
+                break;
+            
+              case "south-america":
+                center = [-58, -18];
+                zoom = 1;
+                minzoom = 1.3;
+                break;
+            
+              case "north-america":
+                zoom = 0.75;
+                center = [-100, 64];
+                minzoom = 1.3;
+                break;
+            
+              case "oceania":
+                zoom = 2.25;
+                center = [172, -24];
+                minzoom = 2;
+                break;
+            }
+
+            /* Creating the map with the defined center, zoom, and layers */
+            var map = new ol.Map({
+              target: 'map-' + i,
+              layers: [
+                new ol.layer.Tile({
+                  source: new ol.source.OSM(),
+                }),
+                vectorLayer
+              ],
+              view: new ol.View({
+                center: ol.proj.fromLonLat(center), 
+                zoom: zoom, 
+                minzoom: minzoom,
+                maxResolution: 72000
+              })
+            });
+      
+            var modify = new ol.interaction.Modify({
+              source: vectorSource,
+              style: new ol.style.Style({
+                fill: new ol.style.Fill({
+                  color: "rgba(255, 255, 255, 0.2)"
+                }),
+                stroke: new ol.style.Stroke({
+                  color: "#ffcc33",
+                  width: 2
+                }),
+                image: new ol.style.Circle({
+                  radius: 7,
+                  fill: new ol.style.Fill({
+                    color: "#ffcc33",
+                  })
+                })
+              }),
+              deleteCondition: function(event) 
+              {
+                return ol.events.condition.shiftKeyOnly(event) &&
+                      ol.events.condition.singleClick(event);
+              }
+            });
+      
+            map.addInteraction(modify);
+
+            modify.on('modifyend', function(event) {
+              var modifiedFeature = event.features.getArray()[0];
+              var modifiedCoordinates = modifiedFeature.getGeometry().getCoordinates();
+              
+              // Transform the coordinates from EPSG:3857 to EPSG:4326
+              var transformedCoordinates = modifiedCoordinates.map(function(polygon) {
+                return polygon.map(function(ring) {
+                  return ring.map(function(coordinate) {
+                    return ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326');
+                  });
+                });
+              });
+      
+              var newData = JSON.stringify(transformedCoordinates).trim().split('\n');
+              newData = newData.map(s =>s.trim());
+              newData = newData.filter(Boolean);
+              
+              console.log(`map-${i}: `,newData);
+              var countryName = document.getElementById('name-' + i).value;
+              var countryData = {
+                "type": "Feature",
+                "properties": {
+                  "name": [countryName],
+                  "id": countryName,
+                  "capital": [],
+                  "misspell_name": [],
+                  "misspell_capital": [],
+                  "continent": continent, 
+                },
+                "geometry": {
+                  "type": countryFeatures.geometry.type,
+                  "coordinates": newData,
+                }
+              }
+
+              // Check if the country already exists in splitCountriesData
+              var countryIndex = splitCountriesData.findIndex(function(country) {
+                  return country.properties.id === countryData.properties.id;
+              });
+              console.log(countryIndex);
+          
+              // If the country exists, update its data; otherwise, push it into splitCountriesData
+              if (countryIndex !== -1) {
+                  splitCountriesData[countryIndex] = countryData;
+              } else {
+                  splitCountriesData.push(countryData);
+              }
+            });
+          }
+      });
+
+      document.getElementById('saveButton').addEventListener('click', function() {
+          var countryName = document.getElementById('countryName').value;
+          console.log(splitCountriesData);
+          $.ajax({
+              url: '/saveSplitCountries',
+              type: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify({
+                  originalCountryId: countryFeatures.properties.id,
+                  splitCountries: splitCountriesData
+              }),
+              dataType: 'json',
+              success: function(data) {
+                  // Handle success response
+                  console.log('Split countries saved successfully:', data);
+                  alert('Split countries saved successfully.');
+                  location.reload();
+              },
+              error: function(xhr, status, error) {
+                  // Handle error response
+                  console.error('Failed to save split countries:', error);
+                  alert('Failed to save split countries. Please try again.');
+              }
+          });
+      });
     </script>
   </body>
 </html>

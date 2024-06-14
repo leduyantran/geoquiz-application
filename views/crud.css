@@ -1,0 +1,111 @@
+.crud-pageContainer {
+  box-sizing: border-box;
+  display: flex; 
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 32px 48px;
+  width: 100%;
+  gap: 32px;
+}
+
+.crud-pageTitle {
+  width: 100%;
+  font-size: 24px;
+}
+
+.crud-countrySearchBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.crud-countrySearchBarLabel {
+  box-sizing: border-box;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #EAEAEA;
+  border-radius: 8px 0px 0px 8px;
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+  border-bottom: 2px solid black;
+  border-right: 2px solid black;
+}
+
+input:focus {
+  outline: none;
+}
+
+.crud-countrySearchBarHelp {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.crud-informationSectionMenu {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 16px 24px;
+  gap: 32px;
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+  border-right: none;
+  border-left: none;
+}
+
+.crud-dataContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 16px;
+  box-sizing: border-box;
+  padding: 16px 24px;
+  width: 100%;
+  border-bottom: 2px solid black;
+}
+
+.crud-sectionButton {
+  border: none;
+  background-color: transparent;
+  padding: 0;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+button:focus {
+  outline: none;
+}
+
+.crud-dataActionContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.crud-dataActionButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+}

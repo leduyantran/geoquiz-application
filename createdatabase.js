@@ -1,7 +1,7 @@
 const MongoClient = require("mongodb").MongoClient;
 
-// const url = 'mongodb://gq-user:hanoi@node14624-geo-quiz.us.reclaim.cloud/geoquiz';
-const url = "mongodb://127.0.0.1:27017/geoquiz";
+const url = 'mongodb://gq-user:geoquiz2018@node14817-env-2611303.us.reclaim.cloud/geoquiz';
+// const url = "mongodb://127.0.0.1:27017/geoquiz";
 const dbName = "geoquiz";
 var bcrypt = require("bcrypt");
 var data = require("./data/countryDatabase.json");

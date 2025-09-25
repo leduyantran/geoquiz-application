@@ -65,7 +65,7 @@ switch (continent) {
  * Constructing the URL to fetch country data based on the continent.
  * var urlforCountries = "https://" + window.location.host + "/quiz/" + continent;
  */
-var urlforCountries = "http://" + window.location.host + "/quiz/" + continent;
+var urlforCountries = window.location.origin + "/quiz/" + continent;
 
 console.log("entered");
 console.log(urlforCountries);

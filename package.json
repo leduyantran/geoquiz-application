@@ -20,12 +20,12 @@
 		"bcrypt": "^5.1.1",
 		"compression": "^1.7.4",
 		"dotenv": "^7.0.0",
-		"ejs": "^2.7.4",
+		"ejs": "^3.1.10",
 		"express": "^4.19.2",
 		"express-session": "^1.18.0",
 		"formidable": "^1.2.6",
 		"mongo": "^0.1.0",
-		"mongoose": "^5.13.22",
+		"mongoose": "^8.18.2",
 		"request": "^2.88.2"
 	}
 }
